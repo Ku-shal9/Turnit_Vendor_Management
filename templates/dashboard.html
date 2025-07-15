@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Vendor ScoreCard Dashboard</title>
+    <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 30px;
+        background: #f9f9f9;
+      }
+      h1 {
+        text-align: center;
+      }
+      .chart-container {
+        width: 80%;
+        margin: 30px auto;
+        height: 400px;
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px #ddd;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+      th,
+      td {
+        padding: 10px;
+        border: 1px solid #aaa;
+        text-align: center;
+      }
+      h2 {
+        text-align: center;
+        margin-top: 40px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Vendor ScoreCard Dashboard</h1>
+
+    <!-- Chart Containers -->
+    <div id="AverageRating" class="chart-container"></div>
+    <div id="TagsCount" class="chart-container"></div>
+    <div id="TimelinessPercentage" class="chart-container"></div>
+    <div id="TotalWorkingPeriod" class="chart-container"></div>
+    <div id="VendorStatusPie" class="chart-container"></div>
+
+    <!-- Top 5 Vendors Table -->
+    <h2>Top 5 Vendors by Rating</h2>
+    <div class="chart-container">
+      <table>
+        <tr>
+          <th>Vendor ID</th>
+          <th>Name</th>
+          <th>Average Rating</th>
+          <th>Tags Count</th>
+          <th>Timeliness %</th>
+          <th>Work Period (mo)</th>
+        </tr>
+        {% for v in top_vendors %}
+        <tr>
+          <td>{{ v.VendorID }}</td>
+          <td>{{ v.Name }}</td>
+          <td>{{ v.AverageRating }}</td>
+          <td>{{ v.TagsCount }}</td>
+          <td>{{ v.TimelinessPercentage }}</td>
+          <td>{{ v.TotalWorkingPeriod }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+
+    <!-- Chart Rendering -->
+    <script>
+      const rawGraphJSON = {{ graphJSON | safe }};
+      const plotlyGraphJSON = {};
+
+      for (const key in rawGraphJSON) {
+        plotlyGraphJSON[key] = JSON.parse(rawGraphJSON[key]);
+      }
+
+      Plotly.newPlot("AverageRating", plotlyGraphJSON["AverageRating"].data, plotlyGraphJSON["AverageRating"].layout);
+      Plotly.newPlot("TagsCount", plotlyGraphJSON["TagsCount"].data, plotlyGraphJSON["TagsCount"].layout);
+      Plotly.newPlot("TimelinessPercentage", plotlyGraphJSON["TimelinessPercentage"].data, plotlyGraphJSON["TimelinessPercentage"].layout);
+      Plotly.newPlot("TotalWorkingPeriod", plotlyGraphJSON["TotalWorkingPeriod"].data, plotlyGraphJSON["TotalWorkingPeriod"].layout);
+      Plotly.newPlot("VendorStatusPie", plotlyGraphJSON["VendorStatusPie"].data, plotlyGraphJSON["VendorStatusPie"].layout);
+    </script>
+  </body>
+</html>
